@@ -47,6 +47,8 @@ export default Component.extend({
   customLayout: false,
   masonry: null,
 
+  waitForImages: true,
+
   itemClass: computed('itemSelector', function() {
     return get(this, 'itemSelector').replace('.', '');
   }),
@@ -68,13 +70,18 @@ export default Component.extend({
     }
   },
 
+  willDestroyElement() {
+    this._super(...arguments);
+    this._destroyMasonry();
+  },
+
   didRender() {
     this._super(...arguments);
 
     let masonry = get(this, 'masonry');
 
     Ember.run.scheduleOnce('afterRender', this, () => {
-      imagesLoaded(get(this, 'element'), () => {
+      let _f = () => {
         if (masonry) {
           masonry.reloadItems();
         } else {
@@ -87,13 +94,14 @@ export default Component.extend({
         }
 
         masonry.layout();
-      });
-    });
-  },
+      };
 
-  willDestroyElement() {
-    this._super(...arguments);
-    this._destroyMasonry();
+      if (this.get('waitForImages')) {
+        imagesLoaded(get(this, 'element'), _f);
+      } else {
+        _f();
+      }
+    });
   },
 
   _computeOptions() {
