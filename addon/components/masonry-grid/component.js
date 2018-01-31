@@ -67,8 +67,6 @@ export default Component.extend({
       if (shouldRebuild) {
         this._destroyMasonry();
       }
-    } else {
-      this._destroyMasonry();
     }
   },
 
