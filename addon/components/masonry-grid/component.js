@@ -59,11 +59,15 @@ export default Component.extend({
   didUpdateAttrs(attrsObj) {
     this._super(...arguments);
 
-    const shouldRebuild = MASONRY_OPTION_KEYS.any((option) => {
-      return (attrsObj.newAttrs[option] !== attrsObj.oldAttrs[option]);
-    });
+    if (attrsObj) {
+      const shouldRebuild = MASONRY_OPTION_KEYS.any((option) => {
+        return (attrsObj.newAttrs[option] !== attrsObj.oldAttrs[option]);
+      });
 
-    if (shouldRebuild) {
+      if (shouldRebuild) {
+        this._destroyMasonry();
+      }
+    } else {
       this._destroyMasonry();
     }
   },
